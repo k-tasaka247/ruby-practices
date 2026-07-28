@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-1..20.times do |c|
+(1..20).each do |c|
   case
   when c % 3 == 0 && c % 5 == 0
     puts "FizzBuzz"
