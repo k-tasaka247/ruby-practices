@@ -13,55 +13,26 @@ opt.on("-m MON", Integer){|v| options[:m] = v}
 opt.on("-y YEAR", Integer){|v| options[:y] = v}
 opt.parse!(ARGV)
 
-# 
-first_date = Date.new(options[:y], options[:m], 1)
-last_date = Date.new(options[:y], options[:m], -1)
-list = Hash.new
-
-if options[:m] <10
-  puts "      #{options[:m]}月 #{options[:y]}"
-else
-  puts "     #{options[:m]}月 #{options[:y]}"
-end
+# Print Month, Year, Week Day
+puts "#{options[:m]}月 #{options[:y]}".center(20)
 puts "日 月 火 水 木 金 土"
 
-((first_date.day)..(last_date.day)).each do |day| 
-  day_key = (first_date-1+day).day
-  list[day_key.to_s.to_sym]=(first_date-1+day).cwday
-end
+# Get How Many Days There Are
+first_date = Date.new(options[:y], options[:m], 1)
+last_date = Date.new(options[:y], options[:m], -1)
 
-case list[:"1"]
-when 1
-  print "   "
-when 2
-  print "      "
-when 3
-  print "         "
-when 4
-  print "            "
-when 5
-  print "               "
-when 6
-  print "                  "
-when 7
-  print ""
-end
+# Insert Head Space
+print "   " * first_date.wday
 
-list.each do |day_key, cwday|
-  day_key_s = day_key.to_s
-  if day_key_s.to_i < 10
-    if cwday == 6
-    puts " "+day_key_s+" "
-    else
-    print " "+day_key_s+" "
-    end
+# Print Days
+(first_date..last_date).each do |day| 
+  case day.wday
+  when 0
+    print day.day.to_s.rjust(2)+" "
+  when 6
+    puts day.day.to_s.rjust(2)
   else
-    if cwday == 6
-    puts day_key_s+" "
-    else
-    print day_key_s+" "
-    end
+    print day.day.to_s.rjust(2)+" "
   end
 end
-
-puts "\n"
+puts "\n" if last_date.wday !=6
