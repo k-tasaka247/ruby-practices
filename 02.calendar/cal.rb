@@ -36,3 +36,5 @@ print "   " * first_date.wday
   end
 end
 print "\n" if last_date.wday !=6
+print "\n" if last_date.day == 28 && last_date.wday == 6
+print "\n"
