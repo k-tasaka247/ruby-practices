@@ -35,4 +35,4 @@ print "   " * first_date.wday
     print day.day.to_s.rjust(2)+" "
   end
 end
-puts "\n" if last_date.wday !=6
+print "\n" if last_date.wday !=6
