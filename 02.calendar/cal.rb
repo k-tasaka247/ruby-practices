@@ -37,12 +37,8 @@ print "   " * first_date.wday
 end
 
 # Line Break
-print "\n" if last_date.wday !=6
-print "\n" if last_date.day == 28 && last_date.wday == 6
-if last_date.day == 31 && first_date.wday >= 5
-  return
-elsif last_date.day == 30 && first_date.wday == 6
-  return
+if first_date.wday + last_date.day < 35
+  print "\n\n"
 else
   print "\n"
 end
