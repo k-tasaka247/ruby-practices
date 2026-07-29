@@ -27,8 +27,6 @@ print "   " * first_date.wday
 # Print Days
 (first_date..last_date).each do |day| 
   case day.wday
-  when 0
-    print day.day.to_s.rjust(2)+" "
   when 6
     puts day.day.to_s.rjust(2)
   else
