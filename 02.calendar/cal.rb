@@ -35,6 +35,15 @@ print "   " * first_date.wday
     print day.day.to_s.rjust(2)+" "
   end
 end
+
+# Line Break
 print "\n" if last_date.wday !=6
 print "\n" if last_date.day == 28 && last_date.wday == 6
-print "\n"
+if last_date.day == 31 && first_date.wday >= 5
+  return
+elsif last_date.day == 30 && first_date.wday == 6
+  return
+else
+  print "\n"
+end
+#p "\n3" unless (last_date.day == 31 && last_date.wday >= 5) || (last_date.day == 30 && last_date.wday == 6)
