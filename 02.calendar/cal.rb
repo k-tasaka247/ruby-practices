@@ -46,4 +46,3 @@ elsif last_date.day == 30 && first_date.wday == 6
 else
   print "\n"
 end
-#p "\n3" unless (last_date.day == 31 && last_date.wday >= 5) || (last_date.day == 30 && last_date.wday == 6)
