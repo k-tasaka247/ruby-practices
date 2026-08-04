@@ -26,14 +26,15 @@ print "   " * first_date.wday
 
 # Print Days
 (first_date..last_date).each do |date| 
-  day = date.day.to_s.rjust(2)
-  if date.wday == 6
-    puts day
+  print day = date.day.to_s.rjust(2)
+  if date.saturday?
+    print "\n"
   else
-    print day + " "
+    print " "
   end
 end
 
 # Line Break
-Standard_Week_Number = 5
-print first_date.wday + last_date.day < (7 * Standard_Week_Number) ? "\n\n" : "\n"
+MAX_WEEK_NUMBER = 5
+print "\n" if first_date.wday + last_date.day < (7 * MAX_WEEK_NUMBER)
+print "\n"
