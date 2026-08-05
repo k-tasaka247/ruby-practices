@@ -27,11 +27,7 @@ print "   " * first_date.wday
 # Print Days
 (first_date..last_date).each do |date| 
   print day = date.day.to_s.rjust(2)
-  if date.saturday?
-    print "\n"
-  else
-    print " "
-  end
+  print date.saturday? ? "\n" : " "
 end
 
 # Line Break
