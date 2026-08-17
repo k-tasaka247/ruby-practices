@@ -8,16 +8,14 @@ def ls_array_fix(path)
   row_size = (elements.size / PRINT_COLS_WIDTH.to_f).ceil
   elements_sliced_by_cols = row_size.positive? ? elements.each_slice(row_size) : elements
 
-  elements_arrays_for_print = []
-  each_cols_max_length = []
-  row_size.times { elements_arrays_for_print << [] }
-  PRINT_COLS_WIDTH.times { each_cols_max_length << 0 }
+  elements_arrays_for_print = Array.new(row_size) { [] }
+  each_cols_max_length = Array.new(PRINT_COLS_WIDTH, 0)
 
-  elements_sliced_by_cols.each_with_index do |array, i|
-    row_size.times.with_index do |j, k|
-      elements_arrays_for_print[k] << (array[j].nil? ? '' : array[j])
-      element_length = elements_arrays_for_print[k][i].size
-      each_cols_max_length[i] = element_length > each_cols_max_length[i] ? element_length : each_cols_max_length[i]
+  elements_sliced_by_cols.each_with_index do |array, col_number|
+    row_size.times do |i|
+      elements_arrays_for_print[i] << (array[i].nil? ? '' : array[i])
+      element_length = elements_arrays_for_print[i][col_number].size
+      each_cols_max_length[col_number] = element_length > each_cols_max_length[col_number] ? element_length : each_cols_max_length[col_number]
     end
   end
   [elements_arrays_for_print, each_cols_max_length]
