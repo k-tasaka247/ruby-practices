@@ -15,7 +15,7 @@ def ls_array_fix(path)
     row_size.times do |i|
       elements_arrays_for_print[i] << (array[i].nil? ? '' : array[i])
       element_length = elements_arrays_for_print[i][col_number].size
-      each_cols_max_length[col_number] = element_length > each_cols_max_length[col_number] ? element_length : each_cols_max_length[col_number]
+      each_cols_max_length[col_number] = [each_cols_max_length[col_number], element_length].max
     end
   end
   [elements_arrays_for_print, each_cols_max_length]
