@@ -6,16 +6,17 @@ def ls_array_fix(path)
   elements = Dir.glob('*', base: path || '.').sort
 
   row_size = (elements.size / PRINT_COLS_WIDTH.to_f).ceil
-  elements_sliced_by_cols = row_size.positive? ? elements.each_slice(row_size) : elements
+  return [[], []] if row_size.zero?
+  elements_sliced_by_cols = elements.each_slice(row_size)
 
   elements_arrays_for_print = Array.new(row_size) { [] }
   each_cols_max_length = Array.new(PRINT_COLS_WIDTH, 0)
 
   elements_sliced_by_cols.each_with_index do |array, col_number|
     row_size.times do |i|
-      elements_arrays_for_print[i] << (array[i].nil? ? '' : array[i])
-      element_length = elements_arrays_for_print[i][col_number].size
-      each_cols_max_length[col_number] = [each_cols_max_length[col_number], element_length].max
+      element = array[i] || ''
+      elements_arrays_for_print[i] << element
+      each_cols_max_length[col_number] = [each_cols_max_length[col_number], element.size].max
     end
   end
   [elements_arrays_for_print, each_cols_max_length]
