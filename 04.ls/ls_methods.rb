@@ -2,15 +2,15 @@
 
 PRINT_COLS_WIDTH = 3
 
-def ls_contents_get(options, path = '.')
+def ls_contents_get(options, path)
   if options[:a]
-    Dir.entries(path).sort
+    Dir.entries(path || '.').sort
   else
     Dir.glob('*', base: path || '.').sort
   end
 end
 
-def ls_array_fix(options, path = '.')
+def ls_array_fix(options, path)
   elements = ls_contents_get(options, path)
   row_size = (elements.size / PRINT_COLS_WIDTH.to_f).ceil
   return [[], []] if row_size.zero?
@@ -30,7 +30,7 @@ def ls_array_fix(options, path = '.')
   [elements_arrays_for_print, each_cols_max_length]
 end
 
-def ls_print(options, path = '.')
+def ls_print(options, path)
   elements_arrays_for_print, each_cols_max_length = ls_array_fix(options, path)
 
   elements_arrays_for_print.map do |row|
