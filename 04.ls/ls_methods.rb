@@ -4,9 +4,9 @@ PRINT_COLS_WIDTH = 3
 
 def ls_contents_get(options, path)
   if options[:a]
-    Dir.entries(path || '.').sort
+    Dir.entries(path).sort
   else
-    Dir.glob('*', base: path || '.').sort
+    Dir.glob('*', base: path).sort
   end
 end
 
