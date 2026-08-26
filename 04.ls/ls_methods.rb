@@ -2,16 +2,14 @@
 
 PRINT_COLS_WIDTH = 3
 
-def ls_contents_get(options, path)
-  if options[:a]
-    Dir.entries(path).sort
-  else
-    Dir.glob('*', base: path).sort
-  end
+def ls_elements_get(options, path)
+  elements = options[:a] ? Dir.entries(path).sort : Dir.glob('*', base: path).sort
+  elements.reverse! if options[:r]
+  elements
 end
 
 def ls_array_fix(options, path)
-  elements = ls_contents_get(options, path)
+  elements = ls_elements_get(options, path)
   row_size = (elements.size / PRINT_COLS_WIDTH.to_f).ceil
   return [[], []] if row_size.zero?
 
