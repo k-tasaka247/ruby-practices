@@ -38,8 +38,7 @@ def ls_details_get(path, element)
   elements_array = []
   file = File.lstat("#{path}/#{element}")
   elements_array << FILE_TYPE[file.ftype] + (-3..-1).map { |index| FILE_MODE[file.mode.to_s(8)[index]] }.join
-  file_links = file.nlink.to_s
-  elements_array << file_links.rjust(file_links.size)
+  elements_array << file.nlink.to_s
   elements_array << Etc.getpwuid(file.uid).name
   elements_array << Etc.getgrgid(file.gid).name
   elements_array << file.size.to_s
