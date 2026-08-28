@@ -6,7 +6,7 @@ require 'date'
 PRINT_COLS_WIDTH = 3
 FILE_TYPE = { 'fifo' => 'p', 'characterSpecial' => 'c', 'directory' => 'd', 'blockSpecial' => 'b', 'file' => '-', 'link' => 'l', 'socket' => 's' }.freeze
 FILE_MODE = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }.freeze
-COL = 8
+LONGFORMAT_COL = 8
 
 def ls_elements_get(options, path)
   elements = options[:a] ? Dir.entries(path).sort : Dir.glob('*', base: path).sort
@@ -42,15 +42,16 @@ def ls_details_get(path, element)
   elements_array << Etc.getpwuid(file.uid).name
   elements_array << Etc.getgrgid(file.gid).name
   elements_array << file.size.to_s
-  file_timestamp = file.mtime.to_a
-  elements_array << "#{Date::ABBR_MONTHNAMES[file_timestamp[4]]} #{file_timestamp[3].to_s.rjust(2)}"
-  elements_array << "#{file_timestamp[2].to_s.rjust(2, '0')}:#{file_timestamp[1].to_s.rjust(2, '0')}"
+  elements_array << "#{Date::ABBR_MONTHNAMES[file.mtime.month]} #{file.mtime.day.to_s.rjust(2)}"
+  elements_array << "#{file.mtime.hour.to_s.rjust(2, '0')}:#{file.mtime.min.to_s.rjust(2, '0')}"
   elements_array << element
+
   block_size = file.blocks * 512 / 1024
+
   [elements_array, block_size]
 end
 
-def ls_longformat(options, path)
+def ls_longformat_array_fix(options, path)
   elements = ls_elements_get(options, path)
   row_size = elements.size
   return [[], []] if row_size.zero?
@@ -64,16 +65,16 @@ def ls_longformat(options, path)
   end
 
   each_cols_max_length = elements_arrays_for_print.transpose.map { |col| col.map(&:size).max }
-  elements_arrays_for_print.each { |row| (COL - 1).times { |col| row[col] = row[col].rjust(each_cols_max_length[col], ' ') } }
+  elements_arrays_for_print.each { |row| (LONGFORMAT_COL - 1).times { |col| row[col] = row[col].rjust(each_cols_max_length[col], ' ') } }
 
   elements_arrays_for_print.unshift(["total #{total_block_size}"])
   [elements_arrays_for_print, each_cols_max_length]
 end
 
 def ls_print(options, path)
-  elements_arrays_for_print, each_cols_max_length = options[:l] ? ls_longformat(options, path) : ls_array_fix(options, path)
+  elements_arrays_for_print, each_cols_max_length = options[:l] ? ls_longformat_array_fix(options, path) : ls_array_fix(options, path)
 
   elements_arrays_for_print.map do |row|
-    row.map.with_index { |element, i| element.ljust(each_cols_max_length[i]) }.join(options[:l] ? ' ' : '  ')
+    options[:l] ? row.join(' ') : row.map.with_index { |element, i| element.ljust(each_cols_max_length[i]) }.join('  ')
   end
 end
