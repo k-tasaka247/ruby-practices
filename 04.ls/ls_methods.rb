@@ -63,7 +63,7 @@ def ls_details_get(path, element)
   elements_array << Etc.getgrgid(file.gid).name
   elements_array << file.size.to_s
   elements_array << "#{Date::ABBR_MONTHNAMES[file.mtime.month]} #{file.mtime.day.to_s.rjust(2)}"
-  elements_array << "#{file.mtime.hour.to_s.rjust(2, '0')}:#{file.mtime.min.to_s.rjust(2, '0')}"
+  elements_array << (file.mtime.year == Date.today.year ? "#{file.mtime.hour.to_s.rjust(2, '0')}:#{file.mtime.min.to_s.rjust(2, '0')}" : file.mtime.year.to_s)
   elements_array << element
 
   block_size = file.blocks * 512 / 1024
