@@ -6,21 +6,18 @@ require 'date'
 PRINT_COLS_WIDTH = 3
 FILE_TYPE = { 'fifo' => 'p', 'characterSpecial' => 'c', 'directory' => 'd', 'blockSpecial' => 'b', 'file' => '-', 'link' => 'l', 'socket' => 's' }.freeze
 FILE_MODE = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }.freeze
+SPECIAL_FILE_MODE_CHAR = %w[s s t].freeze
 LONGFORMAT_COL_WITHOUT_FILE_NAME = 7
+
+def file_mode_make(file_mode, special_file_char)
+  file_mode[0, 2] + (file_mode[2] == 'x' ? file_mode[2].sub('x', special_file_char) : file_mode[2].sub('-', special_file_char.upcase))
+end
 
 def file_mode_judge(file)
   mode = file.mode.to_s(8)
   file_mode = (-3..-1).map { |index| FILE_MODE[mode[index]] }
-  special_file_mode = mode[-4].to_i.to_s(2).scan(/\d{1,3}/)
-  if special_file_mode[0][0] == '1'
-    file_mode[0] = file_mode[0][0, 2] + (file_mode[0][2] == 'x' ? file_mode[0][2].sub('x', 's') : file_mode[0][2].sub('-', 'S'))
-  end
-  if special_file_mode[0][1] == '1'
-    file_mode[1] = file_mode[1][0, 2] + (file_mode[1][2] == 'x' ? file_mode[1][2].sub('x', 's') : file_mode[1][2].sub('-', 'S'))
-  end
-  if special_file_mode[0][2] == '1'
-    file_mode[2] = file_mode[2][0, 2] + (file_mode[2][2] == 'x' ? file_mode[2][2].sub('x', 't') : file_mode[2][2].sub('-', 'T'))
-  end
+  special_file_mode = mode[-4].to_i.to_s(2).rjust(3, '0')
+  file_mode.each_with_index { |mode, i| file_mode[i] = file_mode_make(mode, SPECIAL_FILE_MODE_CHAR[i]) if special_file_mode[i] == '1' }
   file_mode.join
 end
 
@@ -103,6 +100,6 @@ def ls_print(options, path)
 
   elements_arrays_for_print, each_cols_max_length = ls_array_fix(options, path)
   elements_arrays_for_print.map do |row|
-    options[:l] ? row.join(' ') : row.map.with_index { |element, i| element.ljust(each_cols_max_length[i]) }.join('  ')
+    row.map.with_index { |element, i| element.ljust(each_cols_max_length[i]) }.join('  ')
   end
 end
