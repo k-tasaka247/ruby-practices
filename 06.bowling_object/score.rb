@@ -7,7 +7,7 @@ class Score
   end
 
   def result(score_system = 'old')
-    @score = (score_system == 'current' ? current_frame_score_calcurate(@game) : old_rule_score_calculate(@game))
+    @score = (score_system == 'current' ? current_frame_score_calculate(@game) : old_rule_score_calculate(@game))
   end
 
   private
@@ -31,7 +31,7 @@ class Score
     @score
   end
 
-  def current_frame_score_calcurate(game)
+  def current_frame_score_calculate(game)
     game.each do |frame|
       @score += frame.sum
       next if frame.sum != 10
