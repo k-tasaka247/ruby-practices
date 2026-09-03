@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Score
-  # attr_reader :score
-
   def initialize(game)
     @game = game.arranged # フレームごとに分割したスコアたち
     @score = 0
