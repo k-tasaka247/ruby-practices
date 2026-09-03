@@ -12,6 +12,7 @@ class Score
 
   private
 
+  # 旧ルールでの計算メソッド（課題の計算方式）
   def old_rule_score_calculate(game)
     game.each_with_index do |frame, i|
       break if i > 9
@@ -31,6 +32,7 @@ class Score
     @score
   end
 
+  # カレントフレームの計算メソッド（今回は未使用）
   def current_frame_score_calculate(game)
     game.each do |frame|
       @score += frame.sum
