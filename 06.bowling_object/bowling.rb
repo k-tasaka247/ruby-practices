@@ -2,8 +2,6 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require_relative 'frame'
-require_relative 'game'
 require_relative 'score'
 
 opt = OptionParser.new

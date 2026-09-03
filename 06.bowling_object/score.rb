@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'game'
+
 class Score
   def initialize(game)
     @game = game.arranged # フレームごとに分割したスコアたち
