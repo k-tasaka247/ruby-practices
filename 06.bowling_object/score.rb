@@ -5,11 +5,11 @@ require_relative 'game'
 class Score
   def initialize(game)
     @game = game.arranged # フレームごとに分割したスコアたち
-    @score = 0
   end
 
   # score_systemは'current'を選択することで新ルール（カレントフレームシステム）で計算
   def result(score_system)
+    @score = 0
     @score = (score_system == 'current' ? current_frame_score_calculate(@game) : old_rule_score_calculate(@game))
   end
 
