@@ -9,16 +9,16 @@ FILE_MODE = { '0' => '---', '1' => '--x', '2' => '-w-', '3' => '-wx', '4' => 'r-
 SPECIAL_FILE_MODE_CHAR = %w[s s t].freeze
 LONGFORMAT_COL_WITHOUT_FILE_NAME = 7
 
-def file_mode_make(file_mode, special_file_char)
-  file_mode[0, 2] + (file_mode[2] == 'x' ? file_mode[2].sub('x', special_file_char) : file_mode[2].sub('-', special_file_char.upcase))
+def file_mode_make(file_modes, special_file_char)
+  file_modes[0, 2] + (file_modes[2] == 'x' ? special_file_char : special_file_char.upcase)
 end
 
 def file_mode_judge(file)
   mode = file.mode.to_s(8)
-  file_mode = (-3..-1).map { |index| FILE_MODE[mode[index]] }
+  file_modes = (-3..-1).map { |index| FILE_MODE[mode[index]] }
   special_file_mode = mode[-4].to_i.to_s(2).rjust(3, '0')
-  file_mode.each_with_index { |mode, i| file_mode[i] = file_mode_make(mode, SPECIAL_FILE_MODE_CHAR[i]) if special_file_mode[i] == '1' }
-  file_mode.join
+  file_modes = file_modes.map.with_index { |mode, i| special_file_mode[i] == '1' ? file_mode_make(mode, SPECIAL_FILE_MODE_CHAR[i]) : mode }
+  file_modes.join
 end
 
 def number_string?(str)
