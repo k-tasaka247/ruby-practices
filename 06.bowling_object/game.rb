@@ -3,7 +3,7 @@
 require_relative 'frame'
 
 class Game
-  attr_reader :arranged
+  attr_reader :arranged, :pins
 
   def initialize(scores, pins = 10)
     @pins = pins # ピンの本数

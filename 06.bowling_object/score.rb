@@ -5,6 +5,7 @@ require_relative 'game'
 class Score
   def initialize(game)
     @game = game.arranged # フレームごとに分割したスコアたち
+    @pins = game.pins
   end
 
   # score_systemは'current'を選択することで新ルール（カレントフレームシステム）で計算
@@ -21,12 +22,12 @@ class Score
       break if i > 9
 
       @score += frame.sum
-      next if frame.sum != 10
+      next if frame.sum != @pins
 
       @score += game[i + 1][0]
-      next if frame[0] != 10
+      next if frame[0] != @pins
 
-      @score += if game[i + 1][0] == 10
+      @score += if game[i + 1][0] == @pins
                   game[i + 2][0]
                 else
                   game[i + 1][1]
@@ -39,10 +40,10 @@ class Score
   def current_frame_score_calculate(game)
     game.each do |frame|
       @score += frame.sum
-      next if frame.sum != 10
+      next if frame.sum != @pins
 
-      @score += if frame[0] == 10
-                  20
+      @score += if frame[0] == @pins
+                  @pins * 2
                 else
                   frame[0]
                 end
