@@ -4,12 +4,8 @@ def file_read(path)
   File.read(path)
 end
 
-def file_size_get(path)
-  File.lstat(path).size.to_s
-end
-
-def line_chars_count(content)
-  content.size.to_s
+def file_size_get(content)
+  content.bytesize.to_s
 end
 
 def line_count(content)
@@ -21,7 +17,8 @@ def words_count(content)
 end
 
 def wc_output(path, options)
-  file_datas = file_data_get(path)
+  file_contents = file_read(path)
+  file_datas = data_get(file_contents)
   file_datas = wc_justify(file_datas) unless options.count == 1
   file_datas_fixed = array_fix(file_datas, options)
   [file_datas_fixed, path].join(' ')
@@ -38,22 +35,18 @@ def array_fix(array, options)
 end
 
 def wc_stdout_output(lines, options)
-  file_datas = []
-  file_datas << line_count(lines)
-  file_datas << words_count(lines)
-  file_datas << line_chars_count(lines)
+  file_datas = data_get(lines)
   digit = [file_datas.map(&:size).max, 7].max unless options.count == 1
   file_datas_fixed = array_fix(file_datas, options)
   file_datas_justified = wc_justify(file_datas_fixed, digit)
   file_datas_justified.join(' ')
 end
 
-def file_data_get(path)
+def data_get(content)
   file_datas = []
-  file_content = file_read(path)
-  file_datas << line_count(file_content)
-  file_datas << words_count(file_content)
-  file_datas << file_size_get(path)
+  file_datas << line_count(content)
+  file_datas << words_count(content)
+  file_datas << file_size_get(content)
   file_datas
 end
 
@@ -75,7 +68,7 @@ def total_get(path_datas)
 end
 
 def wc_multiple_output(path_array, options)
-  path_datas = path_array.map { |path| file_data_get(path) }
+  path_datas = path_array.map { |path| data_get(file_read(path)) }
   path_datas << total_get(path_datas)
   path_datas_justified = wc_justify(path_datas.flatten).each_slice(3).to_a
   path_datas_fixed = path_datas_justified.map { |datas| array_fix(datas, options) }
