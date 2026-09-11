@@ -7,9 +7,9 @@ class Game
   attr_reader :game_data
 
   def initialize(scores)
-    @game = scores.split(',')
+    game = scores.split(',')
     @game_data = []
-    LAST_FRAME_NUM.times { |i| @game_data << Frame.new(@game, i) }
+    LAST_FRAME_NUM.times { |i| @game_data << Frame.new(game, i) }
   end
 
   def frame_score(frame_num)
