@@ -3,12 +3,31 @@
 require_relative 'frame'
 
 class Game
-  attr_reader :arranged, :pins
+  LAST_FRAME_NUM = 10
+  attr_reader :game_data
 
-  def initialize(scores, pins = 10)
-    @pins = pins # ピンの本数
-    game_str = scores.gsub(/X/, "#{pins},0").split(',') # スコアの解析（Xの変換目的）
-    @game = game_str.map(&:to_i) # 整数型への変換
-    @arranged = Frame.new(@game).frames # Frameクラスの生成、フレームごとに分割
+  def initialize(scores)
+    @game = scores.split(',')
+    @game_data = []
+    LAST_FRAME_NUM.times { |i| @game_data << Frame.new(@game, i) }
+  end
+
+  def frame_score(frame_num)
+    frame = @game_data[frame_num]
+    score = frame.pins_sum
+    return score if frame_num == 9 || (!frame.strike? && !frame.spare?)
+
+    score += @game_data[frame_num + 1].first_shot.score
+    return score if frame.spare?
+
+    score + if @game_data[frame_num + 1].second_shot.nil?
+              @game_data[frame_num + 2].first_shot.score
+            else
+              @game_data[frame_num + 1].second_shot.score
+            end
+  end
+
+  def result
+    (0...LAST_FRAME_NUM).map { |i| frame_score(i) }.sum
   end
 end
