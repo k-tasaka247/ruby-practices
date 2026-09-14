@@ -2,7 +2,7 @@
 
 class Shot
   def initialize(score)
-    @score = score.shift
+    @score = score
   end
 
   def score

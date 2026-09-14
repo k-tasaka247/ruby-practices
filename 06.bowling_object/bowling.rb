@@ -4,6 +4,6 @@
 require 'optparse'
 require_relative 'game'
 
-game = Game.new(ARGV[0]) # ゲームの登録
+game = Game.new(ARGV[0])
 
 puts game.result
