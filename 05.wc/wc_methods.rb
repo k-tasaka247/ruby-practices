@@ -1,30 +1,31 @@
 # frozen_string_literal: true
 
-def file_read(path)
+STDOUT_MIN_DIGIT = 7
+
+def read_file(path)
   File.read(path)
 end
 
-def file_size_get(content)
-  content.bytesize.to_s
+def get_file_size(content)
+  content.bytesize
 end
 
-def line_count(content)
-  content.lines.count.to_s
+def count_lines(content)
+  content.lines.count
 end
 
-def words_count(content)
-  content.split.count.to_s
+def count_words(content)
+  content.split.count
 end
 
 def wc_output(path, options)
-  file_contents = file_read(path)
-  file_datas = data_get(file_contents)
-  file_datas = wc_justify(file_datas) unless options.count == 1
-  file_datas_fixed = array_fix(file_datas, options)
-  [file_datas_fixed, path].join(' ')
+  file_contents = read_file(path)
+  file_data_sizes = get_data_size(file_contents)
+  digit = judge_digit(file_data_sizes, options)
+  create_output(file_data_sizes, path, options, digit)
 end
 
-def array_fix(array, options)
+def fix_array(array, options)
   return array if options.empty?
 
   array_fixed = []
@@ -35,43 +36,59 @@ def array_fix(array, options)
 end
 
 def wc_stdout_output(lines, options)
-  file_datas = data_get(lines)
-  digit = [file_datas.map(&:size).max, 7].max unless options.count == 1
-  file_datas_fixed = array_fix(file_datas, options)
-  file_datas_justified = wc_justify(file_datas_fixed, digit)
-  file_datas_justified.join(' ')
+  file_data_sizes = get_data_size(lines)
+  digit = judge_digit(file_data_sizes, options, STDOUT_MIN_DIGIT)
+  create_output(file_data_sizes, nil, options, digit)
 end
 
-def data_get(content)
-  file_datas = []
-  file_datas << line_count(content)
-  file_datas << words_count(content)
-  file_datas << file_size_get(content)
-  file_datas
+def get_data_size(content)
+  file_data_sizes = []
+  file_data_sizes << count_lines(content)
+  file_data_sizes << count_words(content)
+  file_data_sizes << get_file_size(content)
+  file_data_sizes
 end
 
-def wc_justify(array, digit = nil)
-  digit ||= array.map(&:size).max
-  array.map { |element| element.rjust(digit, ' ') }
+def elements_to_str(array)
+  array.map(&:to_s)
+end
+
+def count_digit(file_data_sizes, min_digit = 0)
+  str_file_data_sizes = elements_to_str(file_data_sizes.flatten)
+  [str_file_data_sizes.map(&:size).max, min_digit].max
+end
+
+def judge_digit(data_sizes, options, min_digit = 0)
+  return nil if options.count == 1
+
+  count_digit(data_sizes, min_digit)
+end
+
+def justify(array, digit)
+  str_array = elements_to_str(array)
+  digit ||= count_digit(str_array)
+  str_array.map { |element| element.rjust(digit, ' ') }
+end
+
+def create_output(datas, label, options, digit)
+  fixed = fix_array(datas, options)
+  fixed = justify(fixed, digit) if digit
+  [fixed, label].compact.join(' ')
 end
 
 def multiple?(array)
   array.size > 1
 end
 
-def total_get(path_datas)
-  total_datas = [0, 0, 0]
-  path_datas.each do |data|
-    data.each_with_index { |element, i| total_datas[i] += element.to_i }
-  end
-  total_datas.map(&:to_s)
+def get_total(path_data_sizes)
+  total_data_sizes = path_data_sizes.transpose.map(&:sum)
 end
 
 def wc_multiple_output(path_array, options)
-  path_datas = path_array.map { |path| data_get(file_read(path)) }
-  path_datas << total_get(path_datas)
-  path_datas_justified = wc_justify(path_datas.flatten).each_slice(3).to_a
-  path_datas_fixed = path_datas_justified.map { |datas| array_fix(datas, options) }
-  path_array << 'total'
-  path_datas_fixed.map.with_index { |data, i| [data, path_array[i]].join(' ') }
+  path_data_sizes = path_array.map { |path| get_data_size(read_file(path)) }
+  path_data_sizes << get_total(path_data_sizes)
+  path_array_fixed = path_array + ['total']
+  digit = count_digit(path_data_sizes)
+
+  path_data_sizes.zip(path_array_fixed).map { |datas, path| create_output(datas, path, options, digit) }
 end
