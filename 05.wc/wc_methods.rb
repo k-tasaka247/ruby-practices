@@ -81,7 +81,7 @@ def multiple?(array)
 end
 
 def get_total(path_data_sizes)
-  total_data_sizes = path_data_sizes.transpose.map(&:sum)
+  path_data_sizes.transpose.map(&:sum)
 end
 
 def wc_multiple_output(path_array, options)
