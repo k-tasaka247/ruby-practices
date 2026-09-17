@@ -34,13 +34,14 @@ class Game
     return score unless frame.bonus?
 
     next_frame = @frames[frame_num + 1]
-    score += next_frame.shots[0].score
-    return score if frame.spare?
+    next_frame_score = next_frame.shots[0].score
 
-    score + if next_frame.second_shot?
-              next_frame.shots[1].score
+    score + if frame.spare?
+              next_frame_score
+            elsif next_frame.second_shot?
+              next_frame_score + next_frame.shots[1].score
             else
-              @frames[frame_num + 2].shots[0].score
+              next_frame_score + @frames[frame_num + 2].shots[0].score
             end
   end
 end
