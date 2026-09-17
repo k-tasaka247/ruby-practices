@@ -3,19 +3,22 @@
 require_relative 'frame'
 
 class Game
-  LAST_FRAME_NUM = 9
-  STRIKE_CHAR = 'X'
-  attr_reader :frames
+  LAST_FRAME_NUM = 10
 
   def initialize(scores_input)
-    scores = scores_input.split(',')
-    scores_chunked = scores.chunk { |score| score == STRIKE_CHAR }.map(&:last)
-    scores_sliced = scores_chunked.map do |chunk|
-      chunk[0] == STRIKE_CHAR ? chunk.map { ['10'] } : chunk.each_slice(2).to_a
-    end.flatten(1)
-    @frames = (0..LAST_FRAME_NUM).map do |i|
-      frame = (i == LAST_FRAME_NUM ? scores_sliced[i, 3].flatten : scores_sliced[i])
-      Frame.new(frame, i, LAST_FRAME_NUM)
+    scores = scores_input.split(',').map { |score| Shot.new(score) }
+    @frames = []
+    i = 0
+    until @frames.size == LAST_FRAME_NUM
+      if @frames.size == LAST_FRAME_NUM - 1
+        @frames << Frame.new(scores[i..], last: true)
+      elsif scores[i].strike?
+        @frames << Frame.new([scores[i]])
+        i += 1
+      else
+        @frames << Frame.new(scores[i, 2])
+        i += 2
+      end
     end
   end
 
