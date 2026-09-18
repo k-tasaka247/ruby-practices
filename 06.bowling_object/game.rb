@@ -6,42 +6,24 @@ class Game
   LAST_FRAME_NUM = 10
 
   def initialize(scores_input)
-    scores = scores_input.split(',').map { |score| Shot.new(score) }
+    shots = scores_input.split(',').map { |shot| Shot.new(shot) }
     @frames = []
     i = 0
-    until @frames.size == LAST_FRAME_NUM
-      if @frames.size == LAST_FRAME_NUM - 1
-        @frames << Frame.new(scores[i..], last: true)
-      elsif scores[i].strike?
-        @frames << Frame.new([scores[i]])
-        i += 1
-      else
-        @frames << Frame.new(scores[i, 2])
-        i += 2
-      end
+    LAST_FRAME_NUM.times do |frame_num|
+      size = if frame_num == LAST_FRAME_NUM - 1
+               3
+             else
+               shots[i].strike? ? 1 : 2
+             end
+      @frames << Frame.new(shots[i, size])
+      i += size
     end
   end
 
   def result
-    @frames.each_index.sum { |frame_num| frame_score(frame_num) }
-  end
-
-  private
-
-  def frame_score(frame_num)
-    frame = @frames[frame_num]
-    score = frame.pins_sum
-    return score unless frame.bonus?
-
-    next_frame = @frames[frame_num + 1]
-    next_frame_score = next_frame.shots[0].score
-
-    score + if frame.spare?
-              next_frame_score
-            elsif next_frame.second_shot?
-              next_frame_score + next_frame.shots[1].score
-            else
-              next_frame_score + @frames[frame_num + 2].shots[0].score
-            end
+    @frames.each.with_index(1).sum do |frame, next_frame_num|
+      following_frames = @frames[next_frame_num..]
+      frame.score(following_frames)
+    end
   end
 end
