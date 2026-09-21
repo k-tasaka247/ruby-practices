@@ -16,12 +16,6 @@ class Frame
     marks_sum + next_frame.shots[0].score + (next_frame.shots[1] || following_frames[1].shots[0]).score
   end
 
-  protected
-
-  def second_shot?
-    !shots[1].nil?
-  end
-
   private
 
   def strike?
