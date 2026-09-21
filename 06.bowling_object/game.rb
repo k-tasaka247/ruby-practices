@@ -24,7 +24,7 @@ class Game
   def result
     @frames.each.with_index(1).sum do |frame, next_frame_num|
       following_frames = @frames[next_frame_num..]
-      frame.score(following_frames)
+      frame.frame_score(following_frames)
     end
   end
 end

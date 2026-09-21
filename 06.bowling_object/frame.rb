@@ -7,20 +7,13 @@ class Frame
     @shots = shots
   end
 
-  def score(following_frames)
-    cureent_frame_sum = sum
-    return cureent_frame_sum unless bonus?
+  def frame_score(following_frames)
+    return marks_sum unless bonus?
 
     next_frame = following_frames[0]
-    next_shot_score = next_frame.shots[0].score
+    return marks_sum + next_frame.shots[0].score if spare?
 
-    cureent_frame_sum + if spare?
-                          next_shot_score
-                        elsif next_frame.second_shot?
-                          next_shot_score + next_frame.shots[1].score
-                        else
-                          next_shot_score + following_frames[1].shots[0].score
-                        end
+    marks_sum + next_frame.shots[0].score + (next_frame.shots[1] || following_frames[1].shots[0]).score
   end
 
   protected
@@ -32,14 +25,14 @@ class Frame
   private
 
   def strike?
-    @shots[0].score == 10
+    @shots[0].strike?
   end
 
   def spare?
     !strike? && @shots[0..1].sum(&:score) == 10
   end
 
-  def sum
+  def marks_sum
     @shots.sum(&:score)
   end
 

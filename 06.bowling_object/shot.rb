@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 class Shot
-  def initialize(shot)
-    @shot = shot
+  def initialize(mark)
+    @mark = mark
   end
 
   def score
-    strike? ? 10 : @shot.to_i
+    strike? ? 10 : @mark.to_i
   end
 
   def strike?
-    @shot == 'X'
+    @mark == 'X'
   end
 end
