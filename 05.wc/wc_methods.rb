@@ -20,53 +20,53 @@ end
 
 def wc_output(path, options)
   file_contents = read_file(path)
-  file_data_sizes = count_size(file_contents)
-  digit = count_digit(file_data_sizes, options)
-  create_output(file_data_sizes, path, options, digit)
+  file_body_sizes = count_size(file_contents)
+  digit = count_digit(file_body_sizes, options)
+  create_output(file_body_sizes, path, options, digit)
 end
 
-def pick_by_option(array, options)
-  return array if options.empty?
+def pick_by_option(sizes, options)
+  return sizes if options.empty?
 
-  array_fixed = []
-  array_fixed << array[0] if options[:l]
-  array_fixed << array[1] if options[:w]
-  array_fixed << array[2] if options[:c]
-  array_fixed
+  fixed = []
+  fixed << sizes[0] if options[:l]
+  fixed << sizes[1] if options[:w]
+  fixed << sizes[2] if options[:c]
+  fixed
 end
 
 def wc_stdout_output(lines, options)
-  file_data_sizes = count_size(lines)
-  digit = count_digit(file_data_sizes, options, STDOUT_MIN_DIGIT)
-  create_output(file_data_sizes, nil, options, digit)
+  file_body_sizes = count_size(lines)
+  digit = count_digit(file_body_sizes, options, STDOUT_MIN_DIGIT)
+  create_output(file_body_sizes, nil, options, digit)
 end
 
 def count_size(content)
-  file_data_sizes = []
-  file_data_sizes << count_lines(content)
-  file_data_sizes << count_words(content)
-  file_data_sizes << get_file_size(content)
-  file_data_sizes
+  [
+    count_lines(content),
+    count_words(content),
+    get_file_size(content)
+  ]
 end
 
 def elements_to_str(array)
   array.map(&:to_s)
 end
 
-def count_digit(data_sizes, options, min_digit = 0)
+def count_digit(body_sizes, options, min_digit = 0)
   return nil if options.count == 1
 
-  str_file_data_sizes = elements_to_str(data_sizes.flatten)
-  [str_file_data_sizes.map(&:size).max, min_digit].max
+  str_file_body_sizes = elements_to_str(body_sizes.flatten)
+  [str_file_body_sizes.map(&:size).max, min_digit].max
 end
 
-def justify(array, digit)
-  str_array = elements_to_str(array)
-  str_array.map { |element| element.rjust(digit, ' ') }
+def justify(sizes, digit)
+  str_sizes = elements_to_str(sizes)
+  str_sizes.map { |size| size.rjust(digit, ' ') }
 end
 
-def create_output(datas, label, options, digit)
-  fixed = pick_by_option(datas, options)
+def create_output(sizes, label, options, digit)
+  fixed = pick_by_option(sizes, options)
   fixed = justify(fixed, digit) if digit
   [fixed, label].compact.join(' ')
 end
@@ -75,15 +75,15 @@ def multiple?(array)
   array.size > 1
 end
 
-def get_total(path_data_sizes)
-  path_data_sizes.transpose.map(&:sum)
+def get_total(path_body_sizes)
+  path_body_sizes.transpose.map(&:sum)
 end
 
-def wc_multiple_output(path_array, options)
-  path_data_sizes = path_array.map { |path| count_size(read_file(path)) }
-  path_data_sizes << get_total(path_data_sizes)
-  path_array_fixed = path_array + ['total']
-  digit = count_digit(path_data_sizes, {})
+def wc_multiple_output(paths, options)
+  path_body_sizes = paths.map { |path| count_size(read_file(path)) }
+  path_body_sizes << get_total(path_body_sizes)
+  paths_fixed = paths + ['total']
+  digit = count_digit(path_body_sizes, {})
 
-  path_data_sizes.zip(path_array_fixed).map { |datas, path| create_output(datas, path, options, digit) }
+  path_body_sizes.zip(paths_fixed).map { |sizes, path| create_output(sizes, path, options, digit) }
 end
