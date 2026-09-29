@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'directory'
-require_relative 'columnformatter'
-require_relative 'longformatter'
+require_relative 'column_formatter'
+require_relative 'long_formatter'
 
 class Command
   def initialize(path, options)
@@ -11,16 +11,8 @@ class Command
   end
 
   def display
-    directory = make_directory_obj
-    puts (@options[:long_format] ? LongFormatter.new(directory) : ColumnFormatter.new(directory)).output
-  end
-
-  private
-
-  def make_directory_obj
-    directory = Directory.new(@path)
-    directory = directory.all if @options[:all]
-    directory.reverse! if @options[:reverse]
-    directory
+    directory = Directory.new(@path, all: @options[:all], reverse: @options[:reverse])
+    directory_formatted = (@options[:long_format] ? LongFormatter.new(directory) : ColumnFormatter.new(directory))
+    puts directory_formatted.output
   end
 end
