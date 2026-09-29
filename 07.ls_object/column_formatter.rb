@@ -7,7 +7,7 @@ class ColumnFormatter
     @directory = directory
   end
 
-  def output
+  def format
     rows = build_cols(@directory.entries).transpose
     rows.map { |row| row.compact.join('  ') }
   end
@@ -15,15 +15,14 @@ class ColumnFormatter
   private
 
   def build_cols(entries)
-    col_group = []
     row_size = entries.size.ceildiv(MAX_COLS)
-    MAX_COLS.times do |i|
+    col_group = MAX_COLS.times.map do |i|
       index = row_size * i
-      col_group << entries.values_at((index)...(index + row_size))
+      entries.values_at((index)...(index + row_size))
     end
-    lengths = col_group.map do |entries_col|
-                entries_col.compact.map{ |entry| entry.name.length }.max
-              end
+    lengths = col_group.map do |entries|
+      entries.compact.map { |entry| entry.name.length }.max
+    end
     col_group.map.with_index do |col, i|
       col.map { |entry| entry ? entry.name.ljust(lengths[i]) : entry }
     end

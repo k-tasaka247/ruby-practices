@@ -8,10 +8,10 @@ class Directory
   def initialize(path, all:, reverse:)
     @path = path
     @entries = if all
-                 Dir.entries(path).sort.map { |entry| Entry.new(@path, entry) }
+                 Dir.entries(path)
                else
-                 Dir.glob('*', base: @path).sort.map { |entry| Entry.new(@path, entry) }
-               end
+                 Dir.glob('*', base: @path)
+               end.sort.map { |entry| Entry.new(@path, entry) }
     @entries.reverse! if reverse
   end
 

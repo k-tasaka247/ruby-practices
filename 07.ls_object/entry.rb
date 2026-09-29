@@ -13,17 +13,18 @@ class Entry
     'link' => 'l',
     'socket' => 's'
   }.freeze
+
   FILE_MODE = {
     '0' => '---', '1' => '--x', '2' => '-w-',
     '3' => '-wx', '4' => 'r--', '5' => 'r-x',
     '6' => 'rw-', '7' => 'rwx'
   }.freeze
+
   SPECIAL_FILE_MODE_CHAR = %w[s s t].freeze
 
   def initialize(path, entry)
-    @path = path
     @entry = entry
-    @stat = File.lstat("#{@path}/#{@entry}")
+    @stat = File.lstat("#{path}/#{@entry}")
   end
 
   def name
@@ -64,11 +65,7 @@ class Entry
     @stat.size
   end
 
-  def date
-    @stat.mtime.strftime('%b %e')
-  end
-
-  def time
-    (Date.today.to_date - @stat.mtime.to_date < 183 ? @stat.mtime.strftime('%H:%M') : @stat.mtime.year.to_s)
+  def mtime
+    @stat.mtime
   end
 end

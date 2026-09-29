@@ -1,40 +1,43 @@
 # frozen_string_literal: true
 
 class LongFormatter
+  RJUST_COLS = %w[1 4 6].freeze
+
   def initialize(directory)
     @directory = directory
   end
 
-  def output
-    l_format_rows = build_long_format_entry
-    block_total_row = ["total #{@directory.block_total}"]
-    entries_digits = l_format_rows.map { |row| row.map(&:size) }
-    max_digit = entries_digits.transpose.map(&:max)
-    entries_justified = l_format_rows.map do |row|
-      row.map.with_index do |detail, i|
-        number_string?(detail) ? detail.rjust(max_digit[i], ' ') : detail.ljust(max_digit[i], ' ')
-      end
+  def format
+    entry_rows = build_entry_rows
+    entry_digits = entry_rows.map { |row| row.map(&:size) }
+    max_digits = entry_digits.transpose.map(&:max)
+    justified_lists = entry_rows.map do |row|
+      row.map.with_index do |cell, i|
+        if RJUST_COLS.include?(i.to_s)
+          cell.rjust(max_digits[i], ' ')
+        else
+          cell.ljust(max_digits[i], ' ')
+        end
+      end.join(' ')
     end
-    block_total_row + entries_justified.map { |entry| entry.join(' ') }
+    block_total_row = ["total #{@directory.block_total}"]
+    block_total_row + justified_lists
   end
 
   private
 
-  def build_long_format_entry
+  def build_entry_rows
     @directory.entries.map do |entry|
-      l_format_row = []
-      l_format_row << entry.file_type + entry.file_mode
-      l_format_row << entry.nlink.to_s
-      l_format_row << entry.user_name
-      l_format_row << entry.group_name
-      l_format_row << entry.size.to_s
-      l_format_row << entry.date
-      l_format_row << entry.time
-      l_format_row << entry.name
+      [
+        entry.file_type + entry.file_mode,
+        entry.nlink.to_s,
+        entry.user_name,
+        entry.group_name,
+        entry.size.to_s,
+        entry.mtime.strftime('%b %e'),
+        Date.today.to_date - entry.mtime.to_date < 183 ? entry.mtime.strftime('%H:%M') : entry.mtime.year.to_s,
+        entry.name
+      ]
     end
-  end
-
-  def number_string?(str)
-    str.match?(/^\s*[0-9]+$/)
   end
 end
