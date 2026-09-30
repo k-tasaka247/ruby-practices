@@ -38,11 +38,6 @@ class Entry
     FILE_TYPE[@stat.ftype]
   end
 
-  def build_file_mode(file_mode, special_file_char)
-    execute_mode = file_mode[2] == 'x' ? special_file_char : special_file_char.upcase
-    file_mode[0, 2] + execute_mode
-  end
-
   def file_mode
     mode = @stat.mode.to_s(8)
     file_modes = (-3..-1).map { |index| FILE_MODE[mode[index]] }
@@ -71,5 +66,12 @@ class Entry
 
   def mtime
     @stat.mtime
+  end
+
+  private
+
+  def build_file_mode(file_mode, special_file_char)
+    execute_mode = file_mode[2] == 'x' ? special_file_char : special_file_char.upcase
+    file_mode[0, 2] + execute_mode
   end
 end
