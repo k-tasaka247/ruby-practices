@@ -6,12 +6,13 @@ class Directory
   attr_reader :entries
 
   def initialize(path, all:, reverse:)
-    @entries = if all
-                 Dir.entries(path)
-               else
-                 Dir.glob('*', base: path)
-               end.sort.map { |entry| Entry.new(path, entry) }
-    @entries.reverse! if reverse
+    entry_names = if all
+                    Dir.entries(path)
+                  else
+                    Dir.glob('*', base: path)
+                  end
+    fixed_entry_names = entry_names.sort.map { |name| Entry.new(path, name) }
+    @entries = reverse ? fixed_entry_names.reverse : fixed_entry_names
   end
 
   def block_total

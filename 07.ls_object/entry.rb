@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
 require 'etc'
 
 class Entry
@@ -39,12 +38,17 @@ class Entry
     FILE_TYPE[@stat.ftype]
   end
 
+  def build_file_mode(file_mode, special_file_char)
+    execute_mode = file_mode[2] == 'x' ? special_file_char : special_file_char.upcase
+    file_mode[0, 2] + execute_mode
+  end
+
   def file_mode
     mode = @stat.mode.to_s(8)
     file_modes = (-3..-1).map { |index| FILE_MODE[mode[index]] }
     special_file_mode = mode[-4].to_i.to_s(2).rjust(3, '0')
     file_modes = file_modes.map.with_index do |mode, i|
-      special_file_mode[i] == '1' ? file_mode_make(mode, SPECIAL_FILE_MODE_CHAR[i]) : mode
+      special_file_mode[i] == '1' ? build_file_mode(mode, SPECIAL_FILE_MODE_CHAR[i]) : mode
     end
     file_modes.join
   end

@@ -18,13 +18,13 @@ class ColumnFormatter
     row_size = entries.size.ceildiv(MAX_COLS)
     col_group = MAX_COLS.times.map do |i|
       index = row_size * i
-      entries.values_at((index)...(index + row_size))
+      entries.values_at(index...(index + row_size))
     end
     lengths = col_group.map do |entries|
       entries.compact.map { |entry| entry.name.length }.max
     end
-    col_group.map.with_index do |col, i|
-      col.map { |entry| entry ? entry.name.ljust(lengths[i]) : entry }
+    col_group.map.with_index do |entries, i|
+      entries.map { |entry| entry.name.ljust(lengths[i]) if entry }
     end
   end
 end

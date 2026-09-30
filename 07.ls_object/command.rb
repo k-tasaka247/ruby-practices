@@ -12,7 +12,7 @@ class Command
 
   def display
     directory = Directory.new(@path, all: @options[:all], reverse: @options[:reverse])
-    formatter = (@options[:long_format] ? LongFormatter.new(directory) : ColumnFormatter.new(directory))
+    formatter = @options[:long_format] ? LongFormatter.new(directory) : ColumnFormatter.new(directory)
     puts formatter.format
   end
 end
